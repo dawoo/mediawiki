@@ -1,7 +1,7 @@
 페미위키 미디어위키 서버 [![Docker Hub Status]][Docker Hub Link] [![Travis CI Status]][Travis CI Link]
 ========
 한국의 페미니즘 위키인 [femiwiki.com]에 사용되는 미디어위키 서버입니다.
-Dockerfile, 도커 컴포즈 파일 등 다양한 코드를 담고있습니다.
+Dockerfile, 도커 컴포즈 파일, 패커 스크립트 등 다양한 코드를 담고있습니다.
 
 [Docker Swarm]을 이용해, 아래와 같이 간편하게 페미위키를 로컬에서 실행할 수
 있습니다.
@@ -29,14 +29,16 @@ composer fix
 &nbsp;
 
 ### Production
-페미위키는 프로덕션 배포에도 [Docker Swarm]을 사용합니다. 페미위키에서 사용하는
-AWS EC2 AMI는 [femiwiki/ami]를 참고해주세요.
+페미위키는 프로덕션에서 내부적으로 [Docker Swarm]을 사용하고, 배포는 [Packer]를
+사용해 새 AMI를 만들어 이뤄집니다. 페미위키에서 사용하는 베이스 AMI는
+[femiwiki/ami]를 참고해주세요.
 
 프로덕션 배포를 할때엔 [secret.php] 에서 개발자모드를 반드시 꺼주세요.
 
 ```sh
-sudo docker swarm init
-sudo docker stack deploy --prune -c ~/mediawiki/production.yml mediawiki
+# 새 AMI 만들기
+packer validate ami/ami.json
+packer build ami/ami.json
 ```
 
 &nbsp;
@@ -53,6 +55,7 @@ of the [GNU Affero General Public License v3.0] or any later version. See
 [Travis CI Link]: https://travis-ci.org/femiwiki/mediawiki
 [femiwiki.com]: https://femiwiki.com
 [Docker Swarm]: https://docs.docker.com/engine/swarm/
+[Packer]: https://packer.io/
 [femiwiki/ami]: https://github.com/femiwiki/ami
 [secret.php]: configs/secret.php.example
 [GNU Affero General Public License v3.0]: LICENSE

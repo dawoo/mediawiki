@@ -1,0 +1,46 @@
+{
+  "builders": [{
+    "type": "amazon-ebs",
+    "region": "ap-northeast-1",
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "name": "femiwiki-base *",
+        "root-device-type": "ebs"
+      },
+      "owners": ["137112412989"],
+      "most_recent": true
+    },
+    "instance_type": "t3.nano",
+    "ssh_username": "ec2-user",
+    "ami_name": "femiwiki-mediawiki {{isotime \"2006-01-02\"}}",
+    "launch_block_device_mappings": [
+      {
+        "device_name": "/dev/xvda",
+        "delete_on_termination": true,
+        "volume_size": 8,
+        "volume_type": "standard"
+      }
+    ],
+    "ami_block_device_mappings": [
+      {
+        "device_name": "/dev/xvda",
+        "delete_on_termination": true,
+        "volume_size": 8,
+        "volume_type": "standard"
+      }
+    ],
+    "ami_description": "AMI for Femiwiki Mediawiki Server",
+    "ami_virtualization_type": "hvm",
+    "ebs_optimized": true,
+    "spot_price": "auto",
+    "spot_price_auto_product": "Linux/UNIX (Amazon VPC)"
+  }],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "ami/bootstrap.sh",
+      "execute_command": "{{.Vars}} sudo -E -S bash '{{.Path}}'"
+    }
+  ]
+}
